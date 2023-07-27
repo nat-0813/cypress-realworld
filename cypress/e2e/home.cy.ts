@@ -48,51 +48,36 @@
 //   )
 // })
 
-// when we use context
+declare namespace Cypress {
+  interface Chainable {
+    getByData(dataTestAttribute: string): Chainable<JQuery<HTMLElement>>
+  }
+}
+Cypress.Commands.add("getByData", (selector) => {
+  return cy.get(`[data-test=${selector}]`)
+})
+
 describe("home page", () => {
   beforeEach(() => {
     cy.visit("http://localhost:3000")
   })
-
   context("Hero section", () => {
     it("the h1 contains the correct text", () => {
       cy.getByData("hero-heading").contains(
         "Testing Next.js Applications with Cypress"
       )
     })
-
-    it("the features on the homepage are correct", () => {
+    // adding the command only will tell cypress to only run this test so that every test is not ran again on save
+    it.only("the features on the homepage are correct", () => {
       cy.get("dt").eq(0).contains("4 Courses")
       cy.get("dt").eq(1).contains("25+ Lessons")
       cy.get("dt").eq(2).contains("Free and Open Source")
     })
   })
-})
-
-//Courses section
-describe("Home page", () => {
-  beforeEach(() => {
-    cy.visit("http://localhost:3000")
-  })
-
-  context("Hero section", () => {
-    it("the h1 contains the correct text", () => {
-      cy.getByData("hero-heading").contains(
-        "Testing Next.js Applications with Cypress"
-      )
-    })
-
-    it("the features on the homepage are correct", () => {
-      cy.get("dt").eq(0).contains("4 Courses")
-      cy.get("dt").eq(1).contains("25+ Lessons")
-      cy.get("dt").eq(2).contains("Free and Open Source")
-    })
-  })
-
   context("Courses section", () => {
     it("Course: Testing Your First Next.js Application", () => {
-      cy.getByData("course-0").find("a").contains("Get started").click() //look for the text 'Getting started', which will select the <a> tag we want all that is left to do is to click on it.
-      cy.location("pathname").should("equal", "/testing-your-first-application") //writing an assertion that verifies that the URL of our course page is correct
+      cy.getByData("course-0").find("a").contains("Get started").click()
+      cy.location("pathname").should("equal", "/testing-your-first-application")
     })
     it("Course: Testing Foundations", () => {
       cy.getByData("course-1").find("a").contains("Get started").click()
@@ -104,4 +89,5 @@ describe("Home page", () => {
     })
   })
 })
+
 //We are using the location API to get the “pathname” which is the URL of our application. Then we write our assertion to make sure that it equals the correct URL or path.
